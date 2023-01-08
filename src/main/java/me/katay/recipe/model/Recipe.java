@@ -1,2 +1,5 @@
-package me.katay.recipe.model;public class Recipe {
+package me.katay.recipe.model;
+
+public class Recipe {
+
 }
