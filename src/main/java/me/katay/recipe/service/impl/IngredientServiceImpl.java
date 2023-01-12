@@ -11,24 +11,38 @@ import java.util.Map;
 public class IngredientServiceImpl implements IngredientService {
 
     private static long ingredientId;
-    private static Map<Long, Ingredient> ingredients = new HashMap<>();
+    private static final Map<Long, Ingredient> ingredients = new HashMap<>();
 
     @Override
-    public Ingredient addIngredient(Ingredient ingredient) {
+    public Ingredient addIngredient(Ingredient ingredient) throws IngredientException {
         if (ingredients.containsKey(ingredientId)) {
-            throw new RuntimeException("Такой енгридиент уже есть.");
-        } else {
-            ingredients.put(ingredientId++, ingredient);
+            throw new IngredientException("Такой енгридиент уже есть.");
         }
+        else {
+            ingredients.put(ingredientId++, ingredient);
         return ingredient;
+        }
     }
 
     @Override
-    public Ingredient getIngredient(Long ingredientId) {
-        if (ingredients.containsKey(ingredientId)) {
-            return ingredients.get(ingredientId);
+    public Ingredient getIngredient(Long id) throws IngredientException {
+        if (ingredients.containsKey(id)) {
+            return ingredients.get(id);
         } else {
-            throw new RuntimeException("Нет такого ингридиента");
+            throw new IngredientException("Нет такого ингридиента");
         }
+    }
+
+    @Override
+    public Ingredient update(Long id, Ingredient ingredient) {
+        if (ingredients.containsKey(id)) {
+            return ingredients.put(id, ingredient);
+        }
+        return null;
+    }
+
+    @Override
+    public Ingredient remove(Long id) {
+        return ingredients.remove(id);
     }
 }
