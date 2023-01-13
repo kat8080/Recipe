@@ -36,7 +36,8 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public Ingredient update(Long id, Ingredient ingredient) {
         if (ingredients.containsKey(id)) {
-            return ingredients.put(id, ingredient);
+            ingredients.put(id, ingredient);
+            return ingredient;
         }
         return null;
     }
