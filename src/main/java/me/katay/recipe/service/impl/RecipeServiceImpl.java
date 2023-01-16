@@ -45,8 +45,9 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe remove(Long id) {
-        return recipes.remove(id);
+    public boolean remove(Long id) {
+        recipes.remove(id);
+        return true;
     }
 
     @Override

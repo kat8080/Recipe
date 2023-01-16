@@ -1,8 +1,13 @@
 package me.katay.recipe.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import me.katay.recipe.model.Recipe;
 import me.katay.recipe.service.RecipeService;
 import me.katay.recipe.service.impl.ReciepeException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,23 +26,48 @@ public class RecipeController {
     private List<Recipe> getAll() {
         return recipeService.getAll();
     }
+
     @PostMapping()
-    public Recipe addReciepe(@RequestBody Recipe recipe) throws ReciepeException {
-        return recipeService.addRecipe(recipe);
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "Рецепт добавлен успешно.",
+            content = {@Content(mediaType = "application/json")}))
+    public ResponseEntity<?> addReciepe(@RequestBody Recipe recipe) throws ReciepeException {
+        if (StringUtils.isBlank(recipe.getTitle())) {
+            return ResponseEntity.badRequest().body("Нет названия рецепта");
+        }
+        return ResponseEntity.ok(recipeService.addRecipe(recipe));
     }
 
     @GetMapping("/{id}")
-    public Recipe getRecipe(@PathVariable("id") Long id) throws ReciepeException {
-        return recipeService.getRecipe(id);
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Рецепт найден успешно.",
+            content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "Рецепт на найден.", content = {})})
+    public ResponseEntity<Recipe> getRecipe(@PathVariable("id") Long id) throws ReciepeException {
+        Recipe recipe = recipeService.getRecipe(id);
+        if (recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(recipe);
     }
 
     @PutMapping("/{id}")
-    public Recipe updateRecipe(@PathVariable("id") Long id, @RequestBody Recipe reciepe) {
-        return recipeService.update(id, reciepe);
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "Изменение добавлено успешно.",
+            content = {@Content(mediaType = "application/json")}))
+    public ResponseEntity<Recipe> updateRecipe(@PathVariable("id") Long id, @RequestBody Recipe reciepe) {
+        Recipe recipe = recipeService.update(id, reciepe);
+        if (recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(recipe);
     }
 
     @DeleteMapping("/{id}")
-    public Recipe deleteRecipe(@PathVariable("id") Long id) {
-        return recipeService.remove(id);
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Рецепт удален успешно.",
+            content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "Рецепт на найден.", content = {})})
+    public ResponseEntity<Void> deleteRecipe(@PathVariable("id") Long id) {
+        if (recipeService.remove(id)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

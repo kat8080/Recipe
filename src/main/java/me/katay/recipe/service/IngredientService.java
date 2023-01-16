@@ -12,5 +12,5 @@ public interface IngredientService {
 
     Ingredient update(Long id, Ingredient ingredient);
 
-    Ingredient remove(Long id);
+    boolean remove(Long id);
 }

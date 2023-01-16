@@ -12,7 +12,7 @@ public interface RecipeService {
 
     Recipe update(Long id, Recipe recipe);
 
-    Recipe remove(Long id);
+    boolean remove(Long id);
 
     List<Recipe> getAll();
 }
