@@ -66,7 +66,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Ingredient addIngredient(Ingredient ingredient) throws IngredientException {
-        if (ingredients.containsValue(ingredientId)) {
+        if (ingredients.containsValue(ingredient)) {
             throw new IngredientException("Такой енгридиент уже есть.");
         } else {
             Ingredient newIngredient = ingredients.put(ingredientId++, ingredient);

@@ -84,10 +84,12 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public void update(Long id, Recipe recipe) {
+    public void update(Long id, Recipe recipe) throws ReciepeException {
         if (recipes.containsKey(id)) {
             recipes.put(id, recipe);
             writeDataFromFile();
+        } else {
+            throw new ReciepeException("По такому id рецепта нет.");
         }
     }
 
