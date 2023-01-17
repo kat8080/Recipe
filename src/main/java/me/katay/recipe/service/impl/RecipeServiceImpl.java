@@ -3,7 +3,6 @@ package me.katay.recipe.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.katay.recipe.model.Ingredient;
 import me.katay.recipe.model.Recipe;
 import me.katay.recipe.service.RecipeService;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,13 +28,12 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final ObjectMapper objectMapper;
 
-    public RecipeServiceImpl(@Value("${application.file.recipes}") String path) {
+    public RecipeServiceImpl(@Value("${application.file.recipes}") String path) throws ReciepeException {
         try {
             this.path = Paths.get(path);
             this.objectMapper = new ObjectMapper();
         } catch (InvalidPathException e) {
-            e.printStackTrace();
-            throw e;
+            throw new ReciepeException("Что то пошло не так.");
         }
     }
 
@@ -67,7 +65,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe addRecipe(Recipe recipe) throws ReciepeException {
-        if (recipes.containsKey(recipeId)) {
+        if (recipes.containsValue(recipeId)) {
             throw new ReciepeException("Такой рецепт уже есть.");
         } else {
             Recipe newRecipe = recipes.put(recipeId++, recipe);
@@ -86,18 +84,16 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe update(Long id, Recipe recipe) {
+    public void update(Long id, Recipe recipe) {
         if (recipes.containsKey(id)) {
-            Recipe newRecipe = recipes.put(id, recipe);
+            recipes.put(id, recipe);
             writeDataFromFile();
-            return newRecipe;
         }
-        return null;
     }
 
     @Override
     public boolean remove(Long id) {
-        Recipe newRecipe = recipes.remove(id);
+        recipes.remove(id);
         writeDataFromFile();
         return true;
     }

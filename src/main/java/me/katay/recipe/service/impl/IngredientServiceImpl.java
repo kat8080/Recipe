@@ -66,7 +66,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Ingredient addIngredient(Ingredient ingredient) throws IngredientException {
-        if (ingredients.containsKey(ingredientId)) {
+        if (ingredients.containsValue(ingredientId)) {
             throw new IngredientException("Такой енгридиент уже есть.");
         } else {
             Ingredient newIngredient = ingredients.put(ingredientId++, ingredient);
@@ -96,7 +96,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public boolean remove(Long id) {
-        Ingredient ingredient = ingredients.remove(id);
+        ingredients.remove(id);
         writeDataFromFile();
         return true;
     }

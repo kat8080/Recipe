@@ -10,7 +10,7 @@ public interface RecipeService {
 
     Recipe getRecipe(Long id) throws ReciepeException;
 
-    Recipe update(Long id, Recipe recipe);
+    void update(Long id, Recipe recipe);
 
     boolean remove(Long id);
 

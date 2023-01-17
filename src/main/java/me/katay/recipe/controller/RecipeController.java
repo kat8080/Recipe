@@ -52,7 +52,7 @@ public class RecipeController {
     @PutMapping("/{id}")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Изменение добавлено успешно.",
             content = {@Content(mediaType = "application/json")}))
-    public ResponseEntity<Recipe> updateRecipe(@PathVariable("id") Long id, @RequestBody Recipe reciepe) {
+    public ResponseEntity<Void> updateRecipe(@PathVariable("id") Long id, @RequestBody Recipe reciepe) {
         Recipe recipe = recipeService.update(id, reciepe);
         if (recipe == null) {
             return ResponseEntity.notFound().build();
