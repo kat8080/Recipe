@@ -43,7 +43,8 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public Ingredient remove(Long id) {
-        return ingredients.remove(id);
+    public boolean remove(Long id) {
+        ingredients.remove(id);
+        return true;
     }
 }
