@@ -7,6 +7,7 @@ import me.katay.recipe.model.Recipe;
 import me.katay.recipe.service.RecipeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class RecipeServiceImpl implements RecipeService {
         }
     }
 
-    private void writeDataFromFile() {
+    private void writeDataFromFile(Map<Long, Recipe> recipes) {
         try {
             byte[] bytes = objectMapper.writeValueAsBytes(recipes);
             Files.write(path, bytes);
@@ -69,7 +70,7 @@ public class RecipeServiceImpl implements RecipeService {
             throw new ReciepeException("Такой рецепт уже есть.");
         } else {
             Recipe newRecipe = recipes.put(recipeId++, recipe);
-            writeDataFromFile();
+            writeDataFromFile(recipes);
             return newRecipe;
         }
     }
@@ -87,7 +88,7 @@ public class RecipeServiceImpl implements RecipeService {
     public void update(Long id, Recipe recipe) throws ReciepeException {
         if (recipes.containsKey(id)) {
             recipes.put(id, recipe);
-            writeDataFromFile();
+            writeDataFromFile(recipes);
         } else {
             throw new ReciepeException("По такому id рецепта нет.");
         }
@@ -96,12 +97,33 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public boolean remove(Long id) {
         recipes.remove(id);
-        writeDataFromFile();
+        writeDataFromFile(recipes);
         return true;
     }
 
     @Override
     public List<Recipe> getAll() {
         return new ArrayList<>(recipes.values());
+    }
+
+    @Override
+    public byte[] getAllInBytes() {
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void importRecipes(MultipartFile recipes) {
+        try {
+            Map<Long, Recipe> mapFromRequest = objectMapper.readValue(recipes.getBytes(), new TypeReference<>() {
+            });
+            writeDataFromFile(mapFromRequest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

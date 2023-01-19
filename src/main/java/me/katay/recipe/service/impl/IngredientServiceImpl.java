@@ -6,10 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.katay.recipe.model.Ingredient;
 import me.katay.recipe.model.Recipe;
 import me.katay.recipe.service.IngredientService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -99,5 +103,15 @@ public class IngredientServiceImpl implements IngredientService {
         ingredients.remove(id);
         writeDataFromFile();
         return true;
+    }
+
+    @Override
+    public InputStreamResource getAllInBytes() {
+        try {
+            return new InputStreamResource(new FileInputStream(path.toFile()));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
