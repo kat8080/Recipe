@@ -7,12 +7,12 @@ import me.katay.recipe.model.Ingredient;
 import me.katay.recipe.service.IngredientService;
 import me.katay.recipe.service.impl.IngredientException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/ingredient")
@@ -75,9 +75,13 @@ public class IngredientController {
         }
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                //ghyujhgjkugbnhyj.contentLength(length)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\" + ingredients.json\"")
                 .body(inputStreamResource);
+    }
+
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void importIngredients(MultipartFile ingredient) {
+        ingredientService.importIngredients(ingredient);
     }
 
 

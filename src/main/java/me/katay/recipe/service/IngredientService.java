@@ -4,6 +4,7 @@ import me.katay.recipe.model.Ingredient;
 import me.katay.recipe.service.impl.IngredientException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface IngredientService {
 
@@ -17,4 +18,6 @@ public interface IngredientService {
     boolean remove(Long id);
 
     InputStreamResource getAllInBytes();
+
+    void importIngredients(MultipartFile ingredients);
 }

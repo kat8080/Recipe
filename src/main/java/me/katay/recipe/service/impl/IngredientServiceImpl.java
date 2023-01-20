@@ -10,6 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
@@ -59,7 +60,7 @@ public class IngredientServiceImpl implements IngredientService {
         }
     }
 
-    private void writeDataFromFile() {
+    private void writeDataFromFile(Map<Long, Ingredient> ingredients) {
         try {
             byte[] bytes = objectMapper.writeValueAsBytes(ingredients);
             Files.write(path, bytes);
@@ -74,7 +75,7 @@ public class IngredientServiceImpl implements IngredientService {
             throw new IngredientException("Такой енгридиент уже есть.");
         } else {
             Ingredient newIngredient = ingredients.put(ingredientId++, ingredient);
-            writeDataFromFile();
+            writeDataFromFile(ingredients);
             return newIngredient;
         }
     }
@@ -92,7 +93,7 @@ public class IngredientServiceImpl implements IngredientService {
     public Ingredient update(Long id, Ingredient ingredient) {
         if (ingredients.containsKey(id)) {
             Ingredient newIngredient = ingredients.put(id, ingredient);
-            writeDataFromFile();
+            writeDataFromFile(ingredients);
             return newIngredient;
         }
         return null;
@@ -101,7 +102,7 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public boolean remove(Long id) {
         ingredients.remove(id);
-        writeDataFromFile();
+        writeDataFromFile(ingredients);
         return true;
     }
 
@@ -113,5 +114,16 @@ public class IngredientServiceImpl implements IngredientService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void importIngredients(MultipartFile ingredients) {
+        try {
+            Map<Long, Ingredient> mapFromRequest = objectMapper.readValue(ingredients.getBytes(), new TypeReference<>() {
+            });
+            writeDataFromFile(mapFromRequest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
