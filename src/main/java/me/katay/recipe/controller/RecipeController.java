@@ -7,7 +7,6 @@ import me.katay.recipe.model.Recipe;
 import me.katay.recipe.service.RecipeService;
 import me.katay.recipe.service.impl.ReciepeException;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -90,6 +89,19 @@ public class RecipeController {
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void importRecipes(MultipartFile recipes) {
         recipeService.importRecipes(recipes);
+    }
+
+    @GetMapping(value = "/export")
+    public ResponseEntity<byte[]> exportTxt() {
+        byte[] bytes = recipeService.exportTxt();
+        if (bytes == null) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_PLAIN)
+                .contentLength(bytes.length)
+                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"info.txt\"")
+                .body(bytes);
     }
 
 }

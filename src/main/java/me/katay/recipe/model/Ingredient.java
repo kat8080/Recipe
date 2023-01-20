@@ -12,4 +12,8 @@ public class Ingredient {
     private int quantity;  //количество
     private String measure;  //единица измерения
 
+    @Override
+    public String toString() {
+        return name + " - " + quantity + " - " + measure;
+    }
 }
